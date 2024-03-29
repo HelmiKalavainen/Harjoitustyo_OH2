@@ -1,11 +1,9 @@
 package com.example.harjoitustyo_oh2;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -17,9 +15,16 @@ public class Kayttoliittyma extends Application {
     private TextField tfTuote = new TextField();
     private TextField tfTunnus = new TextField();
     private TextField tfHinta = new TextField();
-    private TextArea taTulos = new TextArea();
+
+    private TableView tvTulos = new TableView();
+
+    TableColumn tcTuote = new TableColumn("Tuote");
+    TableColumn tcTunnus = new TableColumn("Tunnus");
+    TableColumn tcHinta = new TableColumn("Hinta");
+    TableColumn tcMaara = new TableColumn("Määrä");
+
     private Button btTallenna = new Button("Tallenna");
-    private Button btHae = new Button("Hae tuotetta tunnuksella");
+    private Button btHae = new Button("Hae tuotetta");
 
 
     public static void main(String[] args) {
@@ -30,10 +35,11 @@ public class Kayttoliittyma extends Application {
     public void start(Stage primaryStage) {
 
         GridPane paneeli = new GridPane();
-        VBox vbox = new VBox();
+        final VBox vbox = new VBox();
+        vbox.setPadding(new Insets(10, 10, 10, 10));
         paneeli.setHgap(10);
         paneeli.setVgap(10);
-        paneeli.add(new Label("Tuotteen nimi:"),0,0);
+        paneeli.add(new Label("Tuote:"),0,0);
         paneeli.add(tfTuote, 1,0);
 
         paneeli.add(new Label("Tunnus:"),0,1);
@@ -42,8 +48,11 @@ public class Kayttoliittyma extends Application {
         paneeli.add(new Label("Hinta:"), 0,2);
         paneeli.add(tfHinta,1,2);
 
+        tvTulos.getColumns().addAll(tcTuote, tcTunnus, tcHinta, tcMaara);
         paneeli.add(new Label("Tulos:"), 1, 5);
-        paneeli.add(taTulos, 1, 5);
+        ScrollPane Scroll = new ScrollPane(tvTulos);
+        paneeli.add(tvTulos, 1, 5);
+        tvTulos.setEditable(true);
 
         paneeli.add(btTallenna, 1,3);
         paneeli.add(btHae, 2, 1 );
@@ -82,10 +91,13 @@ public class Kayttoliittyma extends Application {
 
         private String nimi;
 
-        public Tuote(int tuotenro, String nimi, double hinta){
+        private int maara;
+
+        public Tuote(int tuotenro, String nimi, double hinta, int maara){
             this.tuotenro = tuotenro;
             this.hinta = hinta;
             this.nimi = nimi;
+            this.maara = maara;
         }
 
 
@@ -112,6 +124,13 @@ public class Kayttoliittyma extends Application {
         public void setTuotenro(int tuotenro) {
             this.tuotenro = tuotenro;
         }
+        public int getMaara() {
+            return maara;
+        }
+
+        public void setMaara(int maara) {
+            this.maara = maara;
+        }
         public Tuote(int tuotenro, double hinta, String nimi){
 
         }
@@ -119,7 +138,7 @@ public class Kayttoliittyma extends Application {
         public static void main(String[] args) {
             Scanner lukija = new Scanner(System.in);
 
-            System.out.print("Tuotenro: ");
+            System.out.print("Tuotenumero: ");
             int tuotenro = lukija.nextInt();
 
             lukija.nextLine(); // Kuluttaa rivinvaihdon, joka jäi nextInt():n jälkeen(???)
@@ -130,7 +149,7 @@ public class Kayttoliittyma extends Application {
             System.out.print("Hinta: ");
             double hinta = lukija.nextDouble();
 
-            Tuote tuote = new Tuote(tuotenro, nimi, hinta);
+            Tuote tuote = new Tuote(122, "Sprite", 1.5,55);
 
             System.out.println("Tuote luotu: " + tuote.getNimi() + ", Tuotenro: " + tuote.getTuotenro() + ", Hinta: " + tuote.getHinta());
 
