@@ -1,6 +1,7 @@
 package com.example.harjoitustyo_oh2;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -8,22 +9,29 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.Serializable;
-import java.util.Scanner;
+import java.io.*;
+import java.util.StringTokenizer;
 
 public class Kayttoliittyma extends Application {
-    private TextField tfTuote = new TextField();
-    private TextField tfTunnus = new TextField();
-    private TextField tfHinta = new TextField();
+    //textfieldit joihin syötetään tuote sen tunnus ja hinta
+     private TextField tfTuote = new TextField();
+     private TextField tfTunnus = new TextField();
+     private TextField tfHinta = new TextField();
 
-    private TableView tvTulos = new TableView();
+     private TextField tfMaara = new TextField();
 
+    //table view hakutulokselle
+     TableView tvTulos = new TableView();
+
+    //taulukon sarakkeet
     TableColumn tcTuote = new TableColumn("Tuote");
     TableColumn tcTunnus = new TableColumn("Tunnus");
     TableColumn tcHinta = new TableColumn("Hinta");
     TableColumn tcMaara = new TableColumn("Määrä");
 
+    //tallennus- ja haku napit
     private Button btTallenna = new Button("Tallenna");
+
     private Button btHae = new Button("Hae tuotetta");
 
 
@@ -39,22 +47,64 @@ public class Kayttoliittyma extends Application {
         vbox.setPadding(new Insets(10, 10, 10, 10));
         paneeli.setHgap(10);
         paneeli.setVgap(10);
+
         paneeli.add(new Label("Tuote:"),0,0);
         paneeli.add(tfTuote, 1,0);
 
         paneeli.add(new Label("Tunnus:"),0,1);
         paneeli.add(tfTunnus, 1,1);
 
-        paneeli.add(new Label("Hinta:"), 0,2);
+        paneeli.add(new Label("Hinta(€):"), 0,2);
         paneeli.add(tfHinta,1,2);
+
+        paneeli.add(new Label("Määrä:"), 0,3);
+        paneeli.add(tfMaara, 1, 3);
 
         tvTulos.getColumns().addAll(tcTuote, tcTunnus, tcHinta, tcMaara);
         paneeli.add(new Label("Tulos:"), 1, 5);
+
+        //scrollpane ei ehkä tarvita sillä se tulee automaattisesti kun dataa on tarpeeksi
         ScrollPane Scroll = new ScrollPane(tvTulos);
+
+        btTallenna.setOnAction(ActionEvent -> {
+
+            String tuote = tfTuote.getText();
+            int tunnus = Integer.parseInt(tfTunnus.getText());
+            double hinta = Double.parseDouble(tfHinta.getText());
+            int maara = Integer.parseInt(tfMaara.getText());
+
+            // luodaan tuote-olio syötetyillä tiedoilla
+            Tuote uusiTuote = new Tuote(7882388, "Sprite", 1.95, 55);
+            tvTulos.getItems().add(uusiTuote);
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("tuotteet.txt", true))) {
+                writer.write(uusiTuote.toString());
+                writer.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Puuttuvia tietoja!");
+            }
+        });
+
+        btHae.setOnAction(e-> {
+            int tunnus = Integer.parseInt(tfTunnus.getText());
+            String tiedosto = "tuotteet.txt";
+            try(BufferedReader reader = new BufferedReader(new FileReader(tiedosto))){
+                String rivi;
+                while ((rivi = reader.readLine())!= null){
+                    StringTokenizer ST = new StringTokenizer(rivi," ");
+                    int tunnusnro = Integer.parseInt(ST.nextToken());
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        });
+
         paneeli.add(tvTulos, 1, 5);
         tvTulos.setEditable(true);
 
-        paneeli.add(btTallenna, 1,3);
+        paneeli.add(btTallenna, 1,4);
         paneeli.add(btHae, 2, 1 );
 
         vbox.getChildren().add(paneeli);
@@ -64,95 +114,5 @@ public class Kayttoliittyma extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-    }
-
-
-    /** Luokka toteuttaa Tuotteen jolla on tuotenumero, hinta ja nimi
-     *
-     */
-
-    public static class Tuote implements Serializable {
-
-
-        /** tuotenumero kokonaislukuna
-         *
-         */
-        private int tuotenro;
-
-        /** hinta desimaalilukuna
-         *
-         */
-
-        private double hinta;
-
-        /** nimi merkkijonona
-         *
-         */
-
-        private String nimi;
-
-        private int maara;
-
-        public Tuote(int tuotenro, String nimi, double hinta, int maara){
-            this.tuotenro = tuotenro;
-            this.hinta = hinta;
-            this.nimi = nimi;
-            this.maara = maara;
-        }
-
-
-        public String getNimi() {
-            return nimi;
-        }
-
-        public void setNimi(String nimi) {
-            this.nimi = nimi;
-        }
-
-        public double getHinta() {
-            return hinta;
-        }
-
-        public void setHinta(double hinta) {
-            this.hinta = hinta;
-        }
-
-        public int getTuotenro() {
-            return tuotenro;
-        }
-
-        public void setTuotenro(int tuotenro) {
-            this.tuotenro = tuotenro;
-        }
-        public int getMaara() {
-            return maara;
-        }
-
-        public void setMaara(int maara) {
-            this.maara = maara;
-        }
-        public Tuote(int tuotenro, double hinta, String nimi){
-
-        }
-
-        public static void main(String[] args) {
-            Scanner lukija = new Scanner(System.in);
-
-            System.out.print("Tuotenumero: ");
-            int tuotenro = lukija.nextInt();
-
-            lukija.nextLine(); // Kuluttaa rivinvaihdon, joka jäi nextInt():n jälkeen(???)
-
-            System.out.print("Tuotteen nimi: ");
-            String nimi = lukija.nextLine();
-
-            System.out.print("Hinta: ");
-            double hinta = lukija.nextDouble();
-
-            Tuote tuote = new Tuote(122, "Sprite", 1.5,55);
-
-            System.out.println("Tuote luotu: " + tuote.getNimi() + ", Tuotenro: " + tuote.getTuotenro() + ", Hinta: " + tuote.getHinta());
-
-        }
     }
 }
