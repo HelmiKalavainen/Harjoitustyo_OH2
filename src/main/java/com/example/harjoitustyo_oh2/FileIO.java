@@ -1,6 +1,4 @@
-//package com.example.harjoitustyo_oh2;
-/*
-*
+/*package com.example.harjoitustyo_oh2;
 import javafx.scene.control.TextField;
 
 import java.io.*;
@@ -18,28 +16,26 @@ public class FileIO{
 
     public tiedosto() { // tänne lisätty tiedoston käsittelyä
         try {
-            File tiedosto = new File("tuote.dat");
+            File tiedosto = new File("tuotteet.txt");
             if (tiedosto.exists()) {
-                FileInputStream ooo = new FileInputStream("tuote.dat");
+                FileInputStream ooo = new FileInputStream("tuotteet.txt");
                 ObjectInputStream oliot2 = new ObjectInputStream();
-                for (int i = 0; i < 10; i++) {
-                }
-
-
-
-    {
-        // Hanki syötetyt tiedot käyttöliittymästä
-        int tuotenumero = Integer.parseInt(tfTunnus.getText());
-        String nimi = tfTuote.getText();
-        double hinta = Double.parseDouble(tfHinta.getText());
-
+                for (int i = 0; i < 10; i++)
+                    // Hanki syötetyt tiedot käyttöliittymästä
+                    int tuotenumero = Integer.parseInt(tfTunnus.getText());
+                String nimi = tfTuote.getText();
+                double hinta = Double.parseDouble(tfHinta.getText());
+            }
         // Luo olio syötetyistä tiedoista
         Tuote tuote = new Tuote(95645874, 2.95, "Tutti Frutti Choco");
 
         // Tallenna olio tiedostoon
         out.writeObject(tuote);
     } catch (IOException e;)
-    {e.printStackTrace();
-    }
+    {e.printStackTrace();}
+            }
+        }
+}
+}
 
  */

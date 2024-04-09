@@ -60,11 +60,10 @@ public class Kayttoliittyma extends Application {
         paneeli.add(new Label("Määrä:"), 0,3);
         paneeli.add(tfMaara, 1, 3);
 
-        tvTulos.getColumns().addAll(tcTuote, tcTunnus, tcHinta, tcMaara);
-        paneeli.add(new Label("Tulos:"), 1, 5);
 
-        //scrollpane ei ehkä tarvita sillä se tulee automaattisesti kun dataa on tarpeeksi
-        ScrollPane Scroll = new ScrollPane(tvTulos);
+
+        tvTulos.getColumns().addAll(tcTuote, tcTunnus, tcHinta, tcMaara);
+
 
         btTallenna.setOnAction(ActionEvent -> {
 
@@ -94,6 +93,8 @@ public class Kayttoliittyma extends Application {
                 while ((rivi = reader.readLine())!= null){
                     StringTokenizer ST = new StringTokenizer(rivi," ");
                     int tunnusnro = Integer.parseInt(ST.nextToken());
+
+
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -110,7 +111,7 @@ public class Kayttoliittyma extends Application {
         vbox.getChildren().add(paneeli);
 
         Scene scene = new Scene(vbox, 600,500);
-        primaryStage.setTitle("Skannaa tuote");
+        primaryStage.setTitle("Tuote tallennin");
         primaryStage.setScene(scene);
         primaryStage.show();
 
