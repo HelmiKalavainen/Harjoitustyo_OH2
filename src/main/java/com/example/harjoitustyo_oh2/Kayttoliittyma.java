@@ -119,7 +119,6 @@ public class Kayttoliittyma extends Application {
                 writer.newLine();
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Puuttuvia tietoja!");
             }
         });
 
