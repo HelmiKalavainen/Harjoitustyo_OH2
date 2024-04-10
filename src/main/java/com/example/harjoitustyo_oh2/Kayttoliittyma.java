@@ -91,14 +91,12 @@ public class Kayttoliittyma extends Application {
                 error = true;
             }
 
-            if (!isNumeric(tfHinta.getText()))
-            {
+            if (!isNumeric(tfHinta.getText())) {
                 tfHinta.setStyle("-fx-border-color: red; -fx-border-width: 2px ;");
                 error = true;
             }
 
-            if (!isNumeric(tfHinta.getText()))
-            {
+            if (!isNumeric(tfHinta.getText())) {
                 tfMaara.setStyle("-fx-border-color: red; -fx-border-width: 2px ;");
                 error = true;
             }
@@ -156,18 +154,18 @@ public class Kayttoliittyma extends Application {
         primaryStage.setTitle("Tuote tallennin");
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 
-    /**
-     * @author https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
-     * */
-    public static boolean isNumeric(String str) {
-        try {
-            Double.parseDouble(str);
-            return true;
-        } catch(NumberFormatException e){
-            return false;
+
+        /**
+         * @author https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
+         * */
+        public static boolean isNumeric (String str){
+            try {
+                Double.parseDouble(str);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
         }
     }
-}
