@@ -2,11 +2,14 @@ package com.example.harjoitustyo_oh2;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -18,6 +21,7 @@ import java.util.StringTokenizer;
  *
  */
 public class Kayttoliittyma extends Application {
+
     /**
      * Tuotteen nimi teksitkenttä.
      */
@@ -58,14 +62,17 @@ public class Kayttoliittyma extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+
         //paneeli
         GridPane paneeli = new GridPane();
         final VBox vbox = new VBox();
+
         //asetetaan tilaa solujen välille
         vbox.setPadding(new Insets(10, 10, 10, 10));
         paneeli.setHgap(10);
         paneeli.setVgap(10);
         //asetetaan tekstikentät koordinaatein paneeliin
+
         /**
          * tekstialue tuote tekstikentälle
          */
@@ -102,10 +109,13 @@ public class Kayttoliittyma extends Application {
         tvTulos.setItems(tuoteLista);
         tvTulos.getColumns().addAll(tcTuote, tcTunnus, tcHinta, tcMaara);
 
+
 /**
  * Tallentaa tuotteiden tiedot tiedostoon tuotteet.txt.
  *
  */
+        TuotteetTiedostonKasittelija tiedostonKasittelija = new TuotteetTiedostonKasittelija(tuoteLista);
+
         btTallenna.setOnAction(ActionEvent -> {
 
             // Oletus värit, css tiedoston stylesheet:stä
@@ -147,25 +157,35 @@ public class Kayttoliittyma extends Application {
             int maara = Integer.parseInt(tfMaara.getText());
 
             // luodaan tuote-olio syötetyillä tiedoilla
-            Tuote uusiTuote = new Tuote(tunnus, tuote, hinta, maara);
-            tuoteLista.add(uusiTuote);
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("tuotteet.txt", true))) {
+            Tuote uusiTuote = new Tuote(tunnus, tuote, hinta, maara);
+            tiedostonKasittelija.tallennaTiedostoon(uusiTuote, "tuotteet.txt");
+
+        });
+
+
+             /**try (BufferedWriter writer = new BufferedWriter(new FileWriter("tuotteet.txt", true))) {
                 writer.write(String.format("%s %d %s %d", uusiTuote.getNimi(), uusiTuote.getTuotenro(), Double.toString(uusiTuote.getHinta()), uusiTuote.getMaara()));
                 writer.newLine();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+              */
 
 
-        //Huom! jos tiedestossa on tyhjä rivi, se aiheuttaa virheen tuotetta hakiessa
+
+        //Huom! jos tiedostossa on tyhjä rivi, se aiheuttaa virheen tuotetta hakiessa
 
         btHae.setOnAction(e -> {
             int tunnus = Integer.parseInt(tfTunnus.getText());
             tuoteLista.clear();
             String tiedosto = "tuotteet.txt";
-            try (BufferedReader reader = new BufferedReader(new FileReader(tiedosto))) {
+
+            tiedostonKasittelija.lataaTiedostosta(tuoteLista, "tuotteet.txt", tunnus);
+
+
+            /**try (BufferedReader reader = new BufferedReader(new FileReader(tiedosto))) {
                 String rivi;
                 while ((rivi = reader.readLine()) != null) {
                     StringTokenizer ST = new StringTokenizer(rivi, " ");
@@ -175,10 +195,16 @@ public class Kayttoliittyma extends Application {
                     int maara = Integer.parseInt(ST.nextToken());
                     if (tunnus == tunnusnro) tuoteLista.add(new Tuote(tunnus, nimi, hinta, maara));
                 }
+                /**
+                 * Poikkeus jos tiedostoa ei löydy
+
+
             } catch (IOException ex) {
                 System.out.println("Tiedostoa ei löytynyt!");
                 throw new RuntimeException(ex);
             }
+            */
+
             //popup ikkuna jos haetulla tuotenumerolla ei löydy tuotteita
                 Popup virhe = new Popup();
                 Label lbVirhe = new Label("Virhe! Tuotteita ei löytynyt tai tuotenumero on väärä.");
@@ -193,16 +219,34 @@ public class Kayttoliittyma extends Application {
             }
         });
 
+        /**ChoiceBox<String> cbKategoria = new ChoiceBox<>();
+        cbKategoria.getItems().addAll("Elektroniikka", "Käyttötavara", "Elintarvike");
+
+        // Lisää tapahtumankäsittelijä, joka asettaa valitun kategorian tuotteelle
+        cbKategoria.setOnAction(event -> {
+            Tuote selectedTuote = (Tuote) tvTulos.getSelectionModel().getSelectedItem();
+            if (selectedTuote != null) {
+                selectedTuote.setKategoria(cbKategoria.getValue());
+            }
+        });
+         */
+
 
         paneeli.add(tvTulos, 1, 5);
         tvTulos.setEditable(true);
 
+        // lisätään tallenna painike
         paneeli.add(btTallenna, 1, 4);
+
+        //lisätään hae tuotetta- painike
         paneeli.add(btHae, 2, 1);
+
+        //lisätään kategoria valikko
+        paneeli.add(new Label("Kategoria:"), 0, 4);
 
         vbox.getChildren().add(paneeli);
 
-        Scene scene = new Scene(vbox, 600, 500);
+        Scene scene = new Scene(vbox, 800, 800);
         scene.getStylesheets().add("style.css");
         primaryStage.setTitle("Tuote tallennin");
         primaryStage.setScene(scene);
