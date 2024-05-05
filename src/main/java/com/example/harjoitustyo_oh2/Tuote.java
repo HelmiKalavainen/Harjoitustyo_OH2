@@ -1,8 +1,5 @@
 package com.example.harjoitustyo_oh2;
 
-import java.io.Serializable;
-import java.util.Scanner;
-
 /**
  * Luokka toteuttaa Tuotteen jolla on tuotenumero, hinta, nimi ja määrä.
  */

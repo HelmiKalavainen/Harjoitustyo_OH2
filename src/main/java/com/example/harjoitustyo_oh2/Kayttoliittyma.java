@@ -2,19 +2,14 @@ package com.example.harjoitustyo_oh2;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import java.io.*;
-import java.util.StringTokenizer;
 
 /**
  * Luokka Kayttoliittyma toteuttaa yksinkertaisen tuotteiden tallentimen
@@ -62,6 +57,13 @@ public class Kayttoliittyma extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        /**
+         * Käynnistää sovelluksen käyttöliittymän
+         * @param primaryStage JavaFX-sovelluksen ensisijainen näyttöikkuna.
+         *
+         * Tallentaa tuotteet ja niiden tiedot tiedostoon tuotteet.txt
+         * Hakee style.css -tiedostosta graafisia elementtejä
+         */
 
         //paneeli
         GridPane paneeli = new GridPane();
@@ -110,10 +112,6 @@ public class Kayttoliittyma extends Application {
         tvTulos.getColumns().addAll(tcTuote, tcTunnus, tcHinta, tcMaara);
 
 
-/**
- * Tallentaa tuotteiden tiedot tiedostoon tuotteet.txt.
- *
- */
         TuotteetTiedostonKasittelija tiedostonKasittelija = new TuotteetTiedostonKasittelija(tuoteLista);
 
         btTallenna.setOnAction(ActionEvent -> {
@@ -164,17 +162,6 @@ public class Kayttoliittyma extends Application {
         });
 
 
-             /**try (BufferedWriter writer = new BufferedWriter(new FileWriter("tuotteet.txt", true))) {
-                writer.write(String.format("%s %d %s %d", uusiTuote.getNimi(), uusiTuote.getTuotenro(), Double.toString(uusiTuote.getHinta()), uusiTuote.getMaara()));
-                writer.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-              */
-
-
-
         //Huom! jos tiedostossa on tyhjä rivi, se aiheuttaa virheen tuotetta hakiessa
 
         btHae.setOnAction(e -> {
@@ -184,26 +171,6 @@ public class Kayttoliittyma extends Application {
 
             tiedostonKasittelija.lataaTiedostosta(tuoteLista, "tuotteet.txt", tunnus);
 
-
-            /**try (BufferedReader reader = new BufferedReader(new FileReader(tiedosto))) {
-                String rivi;
-                while ((rivi = reader.readLine()) != null) {
-                    StringTokenizer ST = new StringTokenizer(rivi, " ");
-                    String nimi = ST.nextToken().toString();
-                    int tunnusnro = Integer.parseInt(ST.nextToken());
-                    double hinta = Double.parseDouble(ST.nextToken());
-                    int maara = Integer.parseInt(ST.nextToken());
-                    if (tunnus == tunnusnro) tuoteLista.add(new Tuote(tunnus, nimi, hinta, maara));
-                }
-                /**
-                 * Poikkeus jos tiedostoa ei löydy
-
-
-            } catch (IOException ex) {
-                System.out.println("Tiedostoa ei löytynyt!");
-                throw new RuntimeException(ex);
-            }
-            */
 
             //popup ikkuna jos haetulla tuotenumerolla ei löydy tuotteita
                 Popup virhe = new Popup();
@@ -219,19 +186,6 @@ public class Kayttoliittyma extends Application {
             }
         });
 
-        /**ChoiceBox<String> cbKategoria = new ChoiceBox<>();
-        cbKategoria.getItems().addAll("Elektroniikka", "Käyttötavara", "Elintarvike");
-
-        // Lisää tapahtumankäsittelijä, joka asettaa valitun kategorian tuotteelle
-        cbKategoria.setOnAction(event -> {
-            Tuote selectedTuote = (Tuote) tvTulos.getSelectionModel().getSelectedItem();
-            if (selectedTuote != null) {
-                selectedTuote.setKategoria(cbKategoria.getValue());
-            }
-        });
-         */
-
-
         paneeli.add(tvTulos, 1, 5);
         tvTulos.setEditable(true);
 
@@ -240,12 +194,7 @@ public class Kayttoliittyma extends Application {
 
         //lisätään hae tuotetta- painike
         paneeli.add(btHae, 2, 1);
-
-        //lisätään kategoria valikko
-        paneeli.add(new Label("Kategoria:"), 0, 4);
-
         vbox.getChildren().add(paneeli);
-
         Scene scene = new Scene(vbox, 800, 800);
         scene.getStylesheets().add("style.css");
         primaryStage.setTitle("Tuote tallennin");
@@ -255,8 +204,11 @@ public class Kayttoliittyma extends Application {
 
         /**
          * @author https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java
-         *
-         * */
+         * Tarkistaa onko annettu merkkijono numeerinen
+         * @param str tarkistettava merkkijono
+         * @return true jos on numeerinen, muuten false
+         */
+
         public static boolean isNumeric (String str){
             try {
                 Double.parseDouble(str);
